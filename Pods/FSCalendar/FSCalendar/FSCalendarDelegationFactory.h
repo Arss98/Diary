@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FSCalendarDelegationProxy.h"
+#import <FSCalendar/FSCalendarDelegationProxy.h>
 
 @interface FSCalendarDelegationFactory : NSObject
 

@@ -12,7 +12,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FSCalendar.h"
+#import <FSCalendar/FSCalendar.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

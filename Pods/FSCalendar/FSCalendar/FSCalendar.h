@@ -16,11 +16,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FSCalendarAppearance.h"
-#import "FSCalendarConstants.h"
-#import "FSCalendarCell.h"
-#import "FSCalendarWeekdayView.h"
-#import "FSCalendarHeaderView.h"
+#import <FSCalendar/FSCalendarAppearance.h>
+#import <FSCalendar/FSCalendarConstants.h>
+#import <FSCalendar/FSCalendarCell.h>
+#import <FSCalendar/FSCalendarWeekdayView.h>
+#import <FSCalendar/FSCalendarHeaderView.h>
 
 //! Project version number for FSCalendar.
 FOUNDATION_EXPORT double FSCalendarVersionNumber;

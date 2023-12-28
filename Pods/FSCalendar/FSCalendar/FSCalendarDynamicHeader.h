@@ -11,15 +11,15 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-#import "FSCalendar.h"
-#import "FSCalendarCell.h"
-#import "FSCalendarHeaderView.h"
-#import "FSCalendarStickyHeader.h"
-#import "FSCalendarCollectionView.h"
-#import "FSCalendarCollectionViewLayout.h"
-#import "FSCalendarCalculator.h"
-#import "FSCalendarTransitionCoordinator.h"
-#import "FSCalendarDelegationProxy.h"
+#import <FSCalendar/FSCalendar.h>
+#import <FSCalendar/FSCalendarCell.h>
+#import <FSCalendar/FSCalendarHeaderView.h>
+#import <FSCalendar/FSCalendarStickyHeader.h>
+#import <FSCalendar/FSCalendarCollectionView.h>
+#import <FSCalendar/FSCalendarCollectionViewLayout.h>
+#import <FSCalendar/FSCalendarCalculator.h>
+#import <FSCalendar/FSCalendarTransitionCoordinator.h>
+#import <FSCalendar/FSCalendarDelegationProxy.h>
 
 @interface FSCalendar (Dynamic)
 

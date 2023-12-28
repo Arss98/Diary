@@ -6,9 +6,9 @@
 //  Copyright © 2016 Wenchao Ding. All rights reserved.
 //
 
-#import "FSCalendar.h"
-#import "FSCalendarCollectionView.h"
-#import "FSCalendarCollectionViewLayout.h"
+#import <FSCalendar/FSCalendar.h>
+#import <FSCalendar/FSCalendarCollectionView.h>
+#import <FSCalendar/FSCalendarCollectionViewLayout.h>
 
 typedef NS_ENUM(NSUInteger, FSCalendarTransitionState) {
     FSCalendarTransitionStateIdle,
