@@ -94,7 +94,7 @@ private extension CalendarView {
         if let image = UIImage(named: "chevron.down") {
             selectDateButton.setImage(image, for: .normal)
         }
-        selectDateButton.tintColor = .white
+        selectDateButton.tintColor = .white    
         
         self.addSubview(selectDateButton)
     }
@@ -107,7 +107,7 @@ private extension CalendarView {
         calendar.appearance.weekdayTextColor = .white
         calendar.appearance.titleDefaultColor = .white
         calendar.appearance.todayColor = .clear
-        calendar.appearance.titleTodayColor = .red
+        calendar.appearance.titleTodayColor = .today
         calendar.appearance.todaySelectionColor = .white
         calendar.appearance.titleSelectionColor = .background
         calendar.appearance.selectionColor = .white

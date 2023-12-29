@@ -97,7 +97,7 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier, for: indexPath) as! CustomTableViewCell
         
         cell.configure(from: "9.00", to: "10.00", nameTask: "Task")
-        
+        cell.selectionStyle = .none
         return cell
     }
 }
