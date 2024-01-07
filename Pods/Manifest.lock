@@ -1,20 +1,34 @@
 PODS:
   - FSCalendar (2.8.4)
+  - RxCocoa (6.6.0):
+    - RxRelay (= 6.6.0)
+    - RxSwift (= 6.6.0)
+  - RxRelay (6.6.0):
+    - RxSwift (= 6.6.0)
+  - RxSwift (6.6.0)
   - SnapKit (5.6.0)
 
 DEPENDENCIES:
   - FSCalendar
+  - RxCocoa (= 6.6.0)
+  - RxSwift (= 6.6.0)
   - SnapKit (~> 5.6.0)
 
 SPEC REPOS:
   trunk:
     - FSCalendar
+    - RxCocoa
+    - RxRelay
+    - RxSwift
     - SnapKit
 
 SPEC CHECKSUMS:
   FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
+  RxCocoa: 44a80de90e25b739b5aeaae3c8c371a32e3343cc
+  RxRelay: 45eaa5db8ee4fb50e5ebd57deec0159e97fa51e6
+  RxSwift: a4b44f7d24599f674deebd1818eab82e58410632
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: f7c686fc6131650ee10e16623c76398c8cd347a3
+PODFILE CHECKSUM: 77b939f0a2de77b6e59cc8faa4b45954f9018291
 
 COCOAPODS: 1.12.1

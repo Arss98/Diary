@@ -2,25 +2,34 @@ import UIKit
 import SnapKit
 
 class CalendarTodoViewController: UIViewController {
+    private let viewModel = CalendarTodoViewModel()
     
-    private let calendar = CalendarView()
+    private var calendar: CalendarView
     private let floatingButton = UIButton(type: .system)
-    
-    
     private let taskList: UITableView = {
         let table = UITableView(frame: .zero, style: .plain)
         table.translatesAutoresizingMaskIntoConstraints = false
         
         return  table
-    } ()
+    }()
+    
+    init() {
+        self.calendar = CalendarView(frame: .zero, viewModel: viewModel)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
-        
+        initialize()
     }
-    
-    func setup() {
+}
+
+private extension CalendarTodoViewController {
+    func initialize() {
         view.backgroundColor = .background
         
         self.taskList.dataSource = self
@@ -31,15 +40,13 @@ class CalendarTodoViewController: UIViewController {
         setupTaskList()
         setupFloatingButton()
     }
-}
-
-private extension CalendarTodoViewController {
+    
     func setupFloatingButton() {
-        if let image = UIImage(named: "plus") {
+        if let image = UIImage.imagePlus {
             floatingButton.setImage(image, for: .normal)
         }
         
-        floatingButton.backgroundColor = .background
+        floatingButton.backgroundColor = .mainBackground
         floatingButton.tintColor = .white
         floatingButton.layer.cornerRadius = 28
         floatingButton.layer.masksToBounds = true
@@ -58,6 +65,9 @@ private extension CalendarTodoViewController {
     
     func setupCalendar() {
         view.addSubview(calendar)
+        calendar.calendarGestureCallback = { [weak self] in
+            self?.updateView()
+        }
         
         calendar.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -79,25 +89,42 @@ private extension CalendarTodoViewController {
             make.leading.trailing.bottom.equalToSuperview()
         }
     }
-    
-    
-    @objc func floatingButtonTapped() {
-        print("Floating button tapped!")
-    }
-    
 }
 
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return viewModel.output.taskGetCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier, for: indexPath) as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier, 
+                                                 for: indexPath) as! CustomTableViewCell
         
-        cell.configure(from: "9.00", to: "10.00", nameTask: "Task")
+        viewModel.configureCell(cell, indexPath: indexPath)
         cell.selectionStyle = .none
         return cell
+    }
+}
+
+private extension CalendarTodoViewController {
+    func updateView() {
+        let newCalendarHeight: CGFloat = calendar.frame.height == 280 ? 130 : 280
+        let newTaskListOffset: CGFloat = calendar.frame.height == 280 ? 0 : 8
+        
+        calendar.snp.updateConstraints { make in
+            make.height.equalTo(newCalendarHeight)
+        }
+        taskList.snp.updateConstraints { make in
+            make.top.equalTo(calendar.snp.bottom).offset(newTaskListOffset)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func floatingButtonTapped() {
+        print("Floating button tapped!")
     }
 }

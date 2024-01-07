@@ -19,7 +19,6 @@ class TableHeaderView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 private extension TableHeaderView {
@@ -35,8 +34,5 @@ private extension TableHeaderView {
         tableHeaderLabel.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview().offset(16)
         }
-        
-        tableHeaderLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-
     }
 }

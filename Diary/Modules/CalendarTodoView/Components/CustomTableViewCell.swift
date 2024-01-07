@@ -85,7 +85,7 @@ private extension CustomTableViewCell {
     
     func setupDetailsButton() {
         detailsButton.translatesAutoresizingMaskIntoConstraints = false
-        detailsButton.setImage(UIImage(named: "chevron.forward"), for: .normal)
+        detailsButton.setImage(UIImage.imageChevronForward, for: .normal)
         detailsButton.tintColor = .black
         
         backgroundCellView.addSubview(detailsButton)
