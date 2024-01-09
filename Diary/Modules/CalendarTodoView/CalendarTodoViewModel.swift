@@ -6,10 +6,9 @@
 //
 
 import FSCalendar
-import RealmSwift
 
 final class CalendarTodoViewModel: NSObject {
-    let realm = try! Realm()
+//    let realm = try! Realm()
     let input: Input
     var output: Output
     

@@ -22,6 +22,7 @@ class AddTaskViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
+        
     }
 }
 
