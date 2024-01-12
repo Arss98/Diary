@@ -8,21 +8,45 @@
 import UIKit
 import SnapKit
 
-class AddTaskViewController: UIViewController {
-    private let backgroundView = UIView()
-    private let saveButton = UIButton(type: .system)
-    private let startDatePicker = datePickerView(title: Consts.startDateTitle)
-    private let finishDatePicker = datePickerView(title: Consts.endDateTitle, type: .endDate)
-    private let nameTextField = LabeledTextView(title: Consts.headerTaskTitle,
-                                                placeholder: Consts.placeholderTaskTitle)
-    private let descriptionTextField = LabeledTextView(title: Consts.headerTaskDescription,
-                                                       placeholder: Consts.placeholderNodeText,
-                                                       typeTextView: .description)
+final class AddTaskViewController: UIViewController {
+    private let viewModel = AddTaskViewModel()
+    private let contentView = AddTaskView()
+    private var keyboardHandler: KeyboardHandler?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        keyboardHandler = KeyboardHandler(viewController: self)
         initialize()
+        setupDelegateCustomTextView()
+    }
+}
+
+// MARK: - UITextViewDelegate
+extension AddTaskViewController: UITextViewDelegate {
+    func setupDelegateCustomTextView() {
+        contentView.nameTextView.setupDelegate(delegate: self)
+        contentView.descriptionTextView.setupDelegate(delegate: self)
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        keyboardHandler?.activeInput = textView
         
+        if textView.textColor == .lightGray {
+            textView.text = nil
+            textView.textColor = .black
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n") {
+            if textView == contentView.nameTextView.textView {
+                contentView.descriptionTextView.textView.becomeFirstResponder()
+            } else {
+                textView.resignFirstResponder()
+            }
+            return false
+        }
+        return true
     }
 }
 
@@ -30,35 +54,11 @@ class AddTaskViewController: UIViewController {
 private extension AddTaskViewController {
     func initialize() {
         view.backgroundColor = .mainBackground
-        view.addSubview(backgroundView)
+        view.addSubview(contentView)
         
+        contentView.saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         setupNavigationBar()
-        setupBackgroundView()
-        setupSaveButton()
         setupConstraints()
-    }
-    
-    func setupSaveButton() {
-        saveButton.setTitle(Consts.saveButtonTitle, for: .normal)
-        saveButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
-        saveButton.backgroundColor = .mainBackground
-        saveButton.tintColor = .white
-        saveButton.layer.cornerRadius = 10
-        saveButton.layer.masksToBounds = true
-        
-        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-    }
-    
-    func setupBackgroundView() {
-        backgroundView.layer.masksToBounds = true
-        backgroundView.layer.cornerRadius = 24
-        backgroundView.backgroundColor = .white
-        
-        backgroundView.addSubview(startDatePicker)
-        backgroundView.addSubview(finishDatePicker)
-        backgroundView.addSubview(nameTextField)
-        backgroundView.addSubview(descriptionTextField)
-        backgroundView.addSubview(saveButton)
     }
     
     func setupNavigationBar() {
@@ -69,33 +69,7 @@ private extension AddTaskViewController {
     }
     
     func setupConstraints() {
-        startDatePicker.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(32)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        finishDatePicker.snp.makeConstraints { make in
-            make.top.equalTo(startDatePicker.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        nameTextField.snp.makeConstraints { make in
-            make.top.equalTo(finishDatePicker.snp.bottom).offset(32)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        descriptionTextField.snp.makeConstraints { make in
-            make.top.equalTo(nameTextField.snp.bottom).offset(32)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        saveButton.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview().inset(32)
-            make.width.equalTo(140)
-            make.height.equalTo(50)
-        }
-        
-        backgroundView.snp.makeConstraints { make in
+        contentView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(32)
             make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
             make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
@@ -104,8 +78,26 @@ private extension AddTaskViewController {
     }
 }
 
+//MARK: - Data validation check
 private extension AddTaskViewController {
     @objc func saveButtonTapped() {
-        print(startDatePicker.date)
+        if let data = viewModel.validateInput(title: contentView.nameTextView.text, description: contentView.descriptionTextView.text) {
+            viewModel.saveData(title: data.title,
+                               description: data.description,
+                               dateStart: contentView.startDatePicker.date,
+                               dateFinish: contentView.finishDatePicker.date)
+            
+            navigationController?.popViewController(animated: true)
+        } else {
+            contentView.nameTextView.isHiddenErrorLabel = false
+            contentView.descriptionTextView.isHiddenErrorLabel = false
+            showAlert()
+        }
+    }
+    
+    func showAlert() {
+        let alert = UIAlertController(title: Consts.ErrorMessage.alertError, message: Consts.ErrorMessage.alertErrorMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Consts.ok, style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 }

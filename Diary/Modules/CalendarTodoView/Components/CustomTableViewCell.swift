@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class CustomTableViewCell: UITableViewCell {
+final class CustomTableViewCell: UITableViewCell {
     private let nameTaskLabel = UILabel()
     private let dateInterval = UILabel()
     private let detailsButton = UIButton()

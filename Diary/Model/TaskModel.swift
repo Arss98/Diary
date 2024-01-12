@@ -5,11 +5,12 @@
 //  Created by  Arsen Dadaev on 02.01.2024.
 //
 import Foundation
+import RealmSwift
 
-class TaskModel {
-    @objc dynamic var id: Int = 0
-    @objc dynamic var date_start: String = ""
-    @objc dynamic var date_finish: String = ""
-    @objc dynamic var name: String = ""
-    @objc dynamic var descriptionTask: String = ""
+class TaskModel: Object {
+    @Persisted(primaryKey: true) var _id = UUID().uuidString
+    @Persisted var date_start: Date = Date()
+    @Persisted var date_finish: Date = Date()
+    @Persisted var name: String = ""
+    @Persisted var descriptionTask: String = ""
 }

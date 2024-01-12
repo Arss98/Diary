@@ -1,25 +1,10 @@
 import UIKit
+import FSCalendar
 import SnapKit
 
-class CalendarTodoViewController: UIViewController {
+final class CalendarTodoViewController: UIViewController {
     private let viewModel = CalendarTodoViewModel()
-    
-    private var calendar: CalendarView
-    private let taskList: UITableView = {
-        let table = UITableView(frame: .zero, style: .plain)
-        table.translatesAutoresizingMaskIntoConstraints = false
-        
-        return  table
-    }()
-    
-    init() {
-        self.calendar = CalendarView(frame: .zero, viewModel: viewModel)
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private let contentView = CalendarTodoView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,66 +13,45 @@ class CalendarTodoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationItem.largeTitleDisplayMode = .never
+        viewModel.loadTasks()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationItem.largeTitleDisplayMode = .automatic
+    func initialize() {
+        view = contentView
+        
+        setupNaVigationBar()
+        setupDelegate()
+        swipeAction()
+    }
+    
+    func setupDelegate() {
+        contentView.calendar.delegate = self
+        contentView.calendar.dataSource = self
+        contentView.taskList.delegate = self
+        contentView.taskList.dataSource = self
+        viewModel.delegate = self
     }
 }
 
 //MARK: - UI settings
 private extension CalendarTodoViewController {
-    func initialize() {
-        view.backgroundColor = .background
-        
-        setupNaVigationBar()
-        addSubview()
-        setupTaskList()
-        setupConstraints()
-        handleCalendarGesture()
-    }
-    
     func setupNaVigationBar() {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationBar.largeTitleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.white,
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)
+        ]
+        
+        self.title = viewModel.getCurrentDate()
+        
         let leftButton = UIBarButtonItem(title: "2024", style: .plain, target: self, action: #selector(floatingButtonTapped))
         navigationItem.leftBarButtonItem = leftButton
-        
         
         guard let image = UIImage.imagePlus else { return }
         let rightButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(addButtonTapped))
         navigationItem.rightBarButtonItem = rightButton
         
         navigationController?.navigationBar.tintColor = .white
-    }
-    
-    func addSubview() {
-        view.addSubview(calendar)
-        view.addSubview(taskList)
-    }
-    
-    func setupTaskList() {
-        self.taskList.dataSource = self
-        self.taskList.delegate = self
-        self.taskList.register(CustomTableViewCell.self, forCellReuseIdentifier: Consts.customCellIdentifier)
-        
-        taskList.layer.cornerRadius = 20
-        taskList.separatorStyle = .none
-        taskList.tableHeaderView = TableHeaderView(frame: CGRect(x: .zero, y: .zero, width: self.view.frame.width, height: 60))
-    }
-    
-    func setupConstraints() {
-        calendar.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading).offset(16)
-            make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).inset(16)
-            make.height.equalTo(280)
-        }
-        
-        taskList.snp.makeConstraints { make in
-            make.top.equalTo(calendar.snp.bottom).offset(8)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
     }
 }
 
@@ -105,28 +69,74 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
         cell.selectionStyle = .none
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.deleteTask(indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+}
+
+//MARK: - CalendarTodoViewModelDelegate
+extension CalendarTodoViewController: CalendarTodoViewModelDelegate {
+    func didLoadTasks() {
+        contentView.taskList.reloadData()
+    }
+    
+    func didChangeItemCount(to count: Int) {
+        if count == 0 {
+            contentView.noTasksLabel.isHidden = false
+        } else {
+            contentView.noTasksLabel.isHidden = true
+        }
+    }
+}
+
+//MARK: - FSCalendarDelegate, FSCalendarDataSource
+extension CalendarTodoViewController: FSCalendarDelegate, FSCalendarDataSource {
+    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
+        let currentPage = calendar.currentPage
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM yyyy"
+        self.title = dateFormatter.string(from: currentPage)
+    }
 }
 
 // MARK: - Private Extension
 private extension CalendarTodoViewController {
-    func handleCalendarGesture() {
-        calendar.calendarGestureCallback = { [weak self] in
-            self?.updateView()
-        }
+    func swipeAction() {
+        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
+        swipeUp.direction = .up
+        contentView.calendar.addGestureRecognizer(swipeUp)
+        
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
+        swipeDown.direction = .down
+        contentView.calendar.addGestureRecognizer(swipeDown)
+    }
+    
+    @objc func handleSwipe(gesture: UISwipeGestureRecognizer) {
+        guard !(contentView.calendar.scope == .month && gesture.direction == .down) else { return }
+        guard !(contentView.calendar.scope == .week && gesture.direction == .up) else { return }
+        
+        updateView()
     }
     
     func updateView() {
-        let newCalendarHeight: CGFloat = calendar.frame.height == 280 ? 130 : 280
-        let newTaskListOffset: CGFloat = calendar.frame.height == 280 ? 0 : 8
+        let newCalendarHeight: CGFloat = contentView.calendar.frame.height == 280 ? 80 : 280
+        let newTaskListOffset: CGFloat = contentView.calendar.frame.height == 280 ? 0 : 8
         
-        calendar.snp.updateConstraints { make in
-            make.height.equalTo(newCalendarHeight)
-        }
-        taskList.snp.updateConstraints { make in
-            make.top.equalTo(calendar.snp.bottom).offset(newTaskListOffset)
-        }
+        self.contentView.calendar.scope = (self.contentView.calendar.scope == .month) ? .week : .month
         
         UIView.animate(withDuration: 0.3) {
+            self.contentView.calendar.snp.updateConstraints { make in
+                make.height.equalTo(newCalendarHeight)
+            }
+            
+            self.contentView.taskList.snp.updateConstraints { make in
+                make.top.equalTo(self.contentView.calendar.snp.bottom).offset(newTaskListOffset)
+            }
+            
             self.view.layoutIfNeeded()
         }
     }
