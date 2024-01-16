@@ -116,7 +116,7 @@ private extension AddTaskViewController {
         
         let alertController = UIAlertController(title: Consts.deleteAlertTitle, message: Consts.deleteAlertDescription, preferredStyle: .alert)
         
-        let cancelAction = UIAlertAction(title: Consts.cancelButtonTitle , style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: Consts.cancelButtonTitle, style: .cancel, handler: nil)
         
         let deleteAction = UIAlertAction(title: Consts.deleteButtonTitle, style: .destructive) { _ in
             self.viewModel.deleteTask(id: taskId)

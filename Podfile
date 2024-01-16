@@ -9,7 +9,5 @@ target 'Diary' do
 
 	pod 'FSCalendar'
 	pod 'SnapKit', '~> 5.6.0'
-	pod 'RxSwift', '6.6.0'
-    	pod 'RxCocoa', '6.6.0'
 	pod 'RealmSwift'
 end

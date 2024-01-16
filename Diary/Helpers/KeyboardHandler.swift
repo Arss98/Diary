@@ -2,7 +2,7 @@ import UIKit
 
 final class KeyboardHandler: NSObject {
     let viewController: UIViewController
-    var activeInput: UIView?
+    var activeInput: UITextView?
     
     init(viewController: UIViewController) {
         self.viewController = viewController
@@ -21,37 +21,27 @@ final class KeyboardHandler: NSObject {
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-              let activeInput = activeInput else {
-            return
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue, let activeInput = activeInput else { return }
+        
+        var shouldMoveViewUp = false
+        
+        let bottomOfTextField = activeInput.convert(activeInput.bounds, to: viewController.view).maxY;
+        let topOfKeyboard = viewController.view.frame.height - keyboardSize.height
+        if bottomOfTextField > topOfKeyboard {
+            shouldMoveViewUp = true
         }
         
-        let inputFrameInWindow = activeInput.convert(activeInput.bounds, to: nil)
-        let intersect = inputFrameInWindow.intersection(keyboardSize)
         
-        if !intersect.isNull {
-            let offset = intersect.height + 10
-            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: offset, right: 0)
-            
-            UIView.animate(withDuration: 0.3) {
-                self.viewController.view.frame.origin.y = -offset
-                self.viewController.additionalSafeAreaInsets = contentInsets
-                self.viewController.view.layoutIfNeeded()
-            }
-            self.viewController.navigationController?.setNavigationBarHidden(true, animated: true)
+        if(shouldMoveViewUp) {
+            self.viewController.view.frame.origin.y -= keyboardSize.height
+            viewController.navigationController?.setNavigationBarHidden(true, animated: true)
         }
     }
     
     
     @objc func keyboardWillHide(notification: NSNotification) {
-        UIView.animate(withDuration: 0.3) {
-            self.viewController.view.frame.origin.y = 0
-            self.viewController.additionalSafeAreaInsets = .zero
-            self.viewController.view.layoutIfNeeded()
-        }
-        
-        self.viewController.navigationController?.setNavigationBarHidden(false, animated: true)
-        activeInput = nil
+        viewController.view.frame.origin.y = 0
+        viewController.navigationController?.isNavigationBarHidden = false
     }
 }
 
