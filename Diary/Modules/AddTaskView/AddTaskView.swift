@@ -10,8 +10,8 @@ import SnapKit
 
 final class AddTaskView: UIView {
     lazy var saveButton = UIButton(type: .system)
-    lazy var startDatePicker = datePickerView(title: Consts.startDateTitle)
-    lazy var finishDatePicker = datePickerView(title: Consts.endDateTitle, type: .endDate)
+    lazy var startDatePicker = CustomDatePicker(title: Consts.startDateTitle)
+    lazy var finishDatePicker = CustomDatePicker(title: Consts.endDateTitle)
     lazy var nameTextView = CustomTextView(label: Consts.headerTaskTitle,
                                            errorLabel: Consts.ErrorMessage.errorTitle,
                                            placeholder: Consts.placeholderTaskTitle)

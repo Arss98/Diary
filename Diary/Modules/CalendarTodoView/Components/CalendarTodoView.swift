@@ -12,7 +12,7 @@ import SnapKit
 final class CalendarTodoView: UIView {
     lazy var calendar = FSCalendar()
     lazy var noTasksLabel = UILabel()
-    lazy var tableHeaderLabel = UILabel()
+    lazy var tableHeaderLabel = UIView()
     lazy var taskList = UITableView(frame: .zero, style: .plain)
     
     init() {
@@ -33,7 +33,6 @@ private extension CalendarTodoView {
         setupСalendar()
         setupTableHeader()
         setupTaskList()
-        setupNoTasksLabel()
         setupConstraints()
     }
     
@@ -53,25 +52,35 @@ private extension CalendarTodoView {
         calendar.appearance.todayColor = .clear
         calendar.appearance.titleTodayColor = .todaySelect
         calendar.appearance.todaySelectionColor = .white
-        calendar.appearance.titleSelectionColor = UIColor.mainBackground
+        calendar.appearance.titleSelectionColor = .mainBackground
         calendar.appearance.selectionColor = .white
+        calendar.appearance.eventDefaultColor = .white
+        calendar.appearance.eventSelectionColor = .white
     }
     
     func setupTableHeader() {
-        tableHeaderLabel.text = Consts.tableHeaderView
-        tableHeaderLabel.textAlignment = .left
-        tableHeaderLabel.textColor = .black
-        tableHeaderLabel.font = .systemFont(ofSize: 24, weight: .medium)
+        let label = UILabel()
+        
+        tableHeaderLabel.addSubview(label)
+        tableHeaderLabel.layer.cornerRadius = 20
+        tableHeaderLabel.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        tableHeaderLabel.backgroundColor = .white
+        
+        label.text = Consts.tableHeaderView
+        label.textAlignment = .left
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 24, weight: .medium)
+        
+        label.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(8)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
     }
     
     func setupTaskList() {
-        taskList.layer.cornerRadius = 20
         taskList.separatorStyle = .none
-        taskList.tableHeaderView = tableHeaderLabel
         taskList.register(CustomTableViewCell.self, forCellReuseIdentifier: Consts.customCellIdentifier)
-    }
-    
-    func setupNoTasksLabel() {
+
         noTasksLabel.text = Consts.noTasksLAbel
         noTasksLabel.textAlignment = .center
         noTasksLabel.font = .systemFont(ofSize: 20, weight: .medium)
@@ -81,24 +90,24 @@ private extension CalendarTodoView {
     func setupConstraints() {
         calendar.snp.makeConstraints { make in
             make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
-            make.leading.equalTo(self.safeAreaLayoutGuide.snp.leading).offset(16)
-            make.trailing.equalTo(self.safeAreaLayoutGuide.snp.trailing).inset(16)
-            make.height.equalTo(280)
+            make.leading.equalTo(self.safeAreaLayoutGuide.snp.leading)
+            make.trailing.equalTo(self.safeAreaLayoutGuide.snp.trailing)
+            make.height.equalTo(240)
+        }
+        
+        tableHeaderLabel.snp.makeConstraints { make in
+            make.top.equalTo(calendar.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(60)
         }
         
         taskList.snp.makeConstraints { make in
-            make.top.equalTo(calendar.snp.bottom).offset(8)
+            make.top.equalTo(tableHeaderLabel.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
         
         noTasksLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
-        }
-        
-        tableHeaderLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(60)
         }
     }
 }

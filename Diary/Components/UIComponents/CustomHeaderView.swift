@@ -23,7 +23,6 @@ class CustomHeaderView: UIView {
 
 private extension CustomHeaderView {
     func setupTableHeader(textLabel: String, fontSize: CGFloat, fontWeight: UIFont.Weight, textColor: UIColor) {
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = textLabel
         label.textAlignment = .left
         label.textColor = textColor

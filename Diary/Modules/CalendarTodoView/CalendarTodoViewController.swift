@@ -5,6 +5,7 @@ import SnapKit
 final class CalendarTodoViewController: UIViewController {
     private let viewModel = CalendarTodoViewModel()
     private let contentView = CalendarTodoView()
+    private var selectedDate: Date = Date()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -13,7 +14,8 @@ final class CalendarTodoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.loadTasks()
+        viewModel.loadTasks(forDate: selectedDate)
+        contentView.calendar.reloadData()
     }
     
     func initialize() {
@@ -43,6 +45,7 @@ private extension CalendarTodoViewController {
         ]
         
         self.title = viewModel.getCurrentDate()
+        self.navigationItem.backButtonTitle = Consts.backButtonTitle
         
         let leftButton = UIBarButtonItem(title: "2024", style: .plain, target: self, action: #selector(floatingButtonTapped))
         navigationItem.leftBarButtonItem = leftButton
@@ -74,7 +77,15 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
         if editingStyle == .delete {
             viewModel.deleteTask(indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+            contentView.calendar.reloadData()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let task = viewModel.output.taskList[indexPath.row]
+        
+        let detailView = DetailTaskViewController (id: task._id)
+        navigationController?.pushViewController(detailView, animated: true)
     }
 }
 
@@ -85,11 +96,7 @@ extension CalendarTodoViewController: CalendarTodoViewModelDelegate {
     }
     
     func didChangeItemCount(to count: Int) {
-        if count == 0 {
-            contentView.noTasksLabel.isHidden = false
-        } else {
-            contentView.noTasksLabel.isHidden = true
-        }
+        contentView.noTasksLabel.isHidden = (count == 0) ? false : true
     }
 }
 
@@ -100,6 +107,18 @@ extension CalendarTodoViewController: FSCalendarDelegate, FSCalendarDataSource {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
         self.title = dateFormatter.string(from: currentPage)
+    }
+    
+    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        if date != selectedDate {
+            viewModel.loadTasks(forDate: date)
+            selectedDate = date
+        }
+    }
+    
+    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+        let event = viewModel.checkTaskOfDay(date: date)
+        return event ? 1 : 0
     }
 }
 
@@ -123,8 +142,8 @@ private extension CalendarTodoViewController {
     }
     
     func updateView() {
-        let newCalendarHeight: CGFloat = contentView.calendar.frame.height == 280 ? 80 : 280
-        let newTaskListOffset: CGFloat = contentView.calendar.frame.height == 280 ? 0 : 8
+        let newCalendarHeight: CGFloat = contentView.calendar.frame.height == 240 ? 80 : 240
+        let newTaskListOffset: CGFloat = contentView.calendar.frame.height == 240 ? 0 : 8
         
         self.contentView.calendar.scope = (self.contentView.calendar.scope == .month) ? .week : .month
         
@@ -133,7 +152,7 @@ private extension CalendarTodoViewController {
                 make.height.equalTo(newCalendarHeight)
             }
             
-            self.contentView.taskList.snp.updateConstraints { make in
+            self.contentView.tableHeaderLabel.snp.updateConstraints { make in
                 make.top.equalTo(self.contentView.calendar.snp.bottom).offset(newTaskListOffset)
             }
             
@@ -146,7 +165,7 @@ private extension CalendarTodoViewController {
     }
     
     @objc func addButtonTapped() {
-        let addTaskVC = AddTaskViewController()
+        let addTaskVC = AddTaskViewController(selectedDate: selectedDate)
         navigationController?.pushViewController(addTaskVC, animated: true)
     }
 }

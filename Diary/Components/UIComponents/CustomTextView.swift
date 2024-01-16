@@ -56,12 +56,14 @@ class CustomTextView: UIView {
 // MARK: - UI settings
 private extension CustomTextView {
     func initialize() {
-        self.addSubview(label)
-        self.addSubview(textView)
-        self.addSubview(errorLabel)
-        
+        addSubview()
         configureTextView()
         setupLabel()
+    }
+    
+    func addSubview() {
+        [label, textView, errorLabel]
+            .forEach { addSubview($0)}
     }
     
     func setupConstraints(textViewHeight: UInt) {

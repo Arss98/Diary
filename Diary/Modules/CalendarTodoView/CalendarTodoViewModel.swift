@@ -8,11 +8,6 @@
 import RealmSwift
 import Foundation
 
-protocol CalendarTodoViewModelDelegate: AnyObject {
-    func didLoadTasks()
-    func didChangeItemCount(to count: Int)
-}
-
 final class CalendarTodoViewModel {
     var output: Output
     weak var delegate: CalendarTodoViewModelDelegate?
@@ -29,7 +24,6 @@ extension CalendarTodoViewModel {
         cell.configure(from: dateToString(task.date_start), to: dateToString(task.date_finish), nameTask: task.name)
     }
     
-    
     func getCurrentDate() -> String {
         let dateFormator = DateFormatter()
         dateFormator.dateFormat = "MMMM yyyy"
@@ -44,6 +38,16 @@ extension CalendarTodoViewModel {
         return dateString
     }
     
+    func checkTaskOfDay(date: Date) -> Bool {
+        do {
+            let realm = try Realm()
+            let tasksForDate = realm.objects(TaskModel.self).filter("date_start >= %@ AND date_start <= %@", date.startOfDay, date.endOfDay)
+            return !tasksForDate.isEmpty
+        } catch {
+            return false
+        }
+    }
+    
     func deleteTask(_ taskIndex: Int) {
         let task = self.output.taskList[taskIndex]
         
@@ -53,33 +57,34 @@ extension CalendarTodoViewModel {
                 realm.delete(task)
             }
         } catch {
-            // Обработка ошибок
+            print("Error deleting task")
         }
         self.output.taskList.remove(at: taskIndex)
         delegate?.didChangeItemCount(to: self.output.taskList.count)
     }
     
-    func loadTasks() {
+    func loadTasks(forDate selectedDate: Date ) {
         do {
             let realm = try Realm()
-            let tasks = realm.objects(TaskModel.self)
-            self.output.taskList = Array(tasks)
+            let selectedTasks = realm.objects(TaskModel.self).filter (
+                "date_start >= %@ AND date_finish <= %@", selectedDate.startOfDay, selectedDate.endOfDay
+            ).sorted(byKeyPath: "date_start", ascending: true)
+            
+            self.output.taskList = Array(selectedTasks)
             
             delegate?.didLoadTasks()
             delegate?.didChangeItemCount(to: self.output.taskList.count)
         } catch {
-            print("Error load date")
+            print("Error loading data: \(error.localizedDescription)")
         }
     }
-    
 }
 
 extension CalendarTodoViewModel {
     struct Output {
         var taskGetCount: Int {
-            return taskList.count
+            taskList.count
         }
-        
         var taskList: [TaskModel] = []
     }
 }
