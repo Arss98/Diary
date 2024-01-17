@@ -9,34 +9,33 @@ import RealmSwift
 import Foundation
 
 final class CalendarTodoViewModel {
+    private var realm: Realm?
+    
     var output: Output
     weak var delegate: CalendarTodoViewModelDelegate?
     
     init() {
         self.output = Output()
+        
+        do {
+            self.realm = try Realm()
+        } catch {
+            print("Error creating Realm instance: \(error.localizedDescription)")
+        }
     }
 }
 
 extension CalendarTodoViewModel {
-    private func createRealmInstance() -> Realm? {
-        do {
-            let realm = try Realm()
-            return realm
-        } catch {
-            print("Error creating Realm instance: \(error.localizedDescription)")
-            return nil
-        }
-    }
     
     func checkTaskOfDay(date: Date) -> Bool {
-        guard let realm = createRealmInstance() else { return false}
+        guard let realm = self.realm else { return false}
         
         let tasksForDate = realm.objects(TaskModel.self).filter("date_start >= %@ AND date_start <= %@", date.startOfDay, date.endOfDay)
         return !tasksForDate.isEmpty
     }
     
     func deleteTask(_ taskIndex: Int) {
-        guard let realm = createRealmInstance() else { return }
+        guard let realm = self.realm else { return }
         
         let task = self.output.taskList[taskIndex]
         
@@ -52,10 +51,10 @@ extension CalendarTodoViewModel {
     }
     
     func loadTasks(forDate selectedDate: Date ) {
-        guard let realm = createRealmInstance() else { return }
+        guard let realm = self.realm  else { return }
         
         let selectedTasks = realm.objects(TaskModel.self).filter (
-            "date_start >= %@ AND date_finish <= %@", selectedDate.startOfDay, selectedDate.endOfDay
+            "date_start >= %@ AND date_start <= %@", selectedDate.startOfDay, selectedDate.endOfDay
         ).sorted(byKeyPath: "date_start", ascending: true)
         
         self.output.taskList = Array(selectedTasks)

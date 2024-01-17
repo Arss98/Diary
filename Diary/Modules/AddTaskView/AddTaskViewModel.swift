@@ -9,18 +9,18 @@ import Foundation
 import RealmSwift
 
 final class AddTaskViewModel {
-    private func createRealmInstance() -> Realm? {
+    private var realm: Realm?
+    
+    init() {
         do {
-            let realm = try Realm()
-            return realm
+            self.realm = try Realm()
         } catch {
             print("Error creating Realm instance: \(error.localizedDescription)")
-            return nil
         }
     }
-    
+  
     func deleteTask(id: String) {
-        guard let realm = createRealmInstance() else { return }
+        guard let realm = self.realm else { return }
         
         do {
             if let taskToDelete = realm.objects(TaskModel.self).filter("_id == %@", id).first {
@@ -34,7 +34,7 @@ final class AddTaskViewModel {
     }
     
     func updateTask(id: String, title: String, description: String, dateStart: Date, dateFinish: Date) {
-        guard let realm = createRealmInstance() else { return }
+        guard let realm = self.realm else { return }
         
         do {
             if let taskToUpdate = realm.objects(TaskModel.self).filter("_id == %@", id).first {
@@ -51,7 +51,7 @@ final class AddTaskViewModel {
     }
     
     func saveTask(title: String, description: String, dateStart: Date, dateFinish: Date) {
-        guard let realm = createRealmInstance() else { return }
+        guard let realm = self.realm else { return }
         
         do {
             try realm.write {
