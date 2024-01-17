@@ -17,13 +17,13 @@ final class AddTaskViewController: UIViewController {
     private let viewModel = AddTaskViewModel()
     private let contentView = AddTaskView()
     private let type: TypeTackViewController
-    private var keyboardHandler: KeyboardHandler?
     private var id: String?
+    private var topConstraint: Constraint?
+    private var activeInput: UITextView?
     
     init(selectedDate: Date, typeView: TypeTackViewController = .add) {
         self.type = typeView
         super.init(nibName: nil, bundle: nil)
-        
         contentView.startDatePicker.setupCurrentDate(inputDate: selectedDate)
         contentView.finishDatePicker.setupCurrentDate(inputDate: selectedDate, type: .endDate)
     }
@@ -39,9 +39,10 @@ final class AddTaskViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        keyboardHandler = KeyboardHandler(viewController: self)
         initialize()
         setupDelegateCustomTextView()
+        setupKeyboardNotifications()
+        registerGesture()
     }
 }
 
@@ -53,7 +54,7 @@ extension AddTaskViewController: UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        keyboardHandler?.activeInput = textView
+        self.activeInput = textView
         
         if textView.textColor == .lightGray {
             textView.text = nil
@@ -101,11 +102,58 @@ private extension AddTaskViewController {
     
     func setupConstraints() {
         contentView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(32)
+            self.topConstraint = make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(32).constraint
             make.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
             make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
             make.bottom.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Keyboard setting
+private extension AddTaskViewController {
+    func setupKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue, let activeInput = self.activeInput else { return }
+    
+        let bottomOfTextField = activeInput.convert(activeInput.bounds, to: self.contentView).maxY
+        
+        if bottomOfTextField > keyboardSize.height {
+            let heightOverlap = keyboardSize.height - activeInput.convert(activeInput.bounds, to: self.contentView).minY
+            
+            self.topConstraint?.update(offset: -heightOverlap)
+            UIView.animate(withDuration: 0.3) {
+                self.navigationController?.setNavigationBarHidden(true, animated: true)
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            self.topConstraint?.update(offset: 32)
+            UIView.animate(withDuration: 0.3) {
+                self.navigationController?.setNavigationBarHidden(false, animated: true)
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.topConstraint?.update(offset: 32)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func registerGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func hideKeyboard() {
+        self.view.endEditing(true)
     }
 }
 

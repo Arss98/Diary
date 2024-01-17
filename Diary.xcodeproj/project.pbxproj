@@ -17,7 +17,6 @@
 		6568A4A72B4961CB008B14B9 /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4A62B4961CB008B14B9 /* CustomHeaderView.swift */; };
 		6568A4A92B49CE17008B14B9 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4A82B49CE17008B14B9 /* CustomTextView.swift */; };
 		6568A4AD2B4D5D88008B14B9 /* AddTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4AC2B4D5D88008B14B9 /* AddTaskViewModel.swift */; };
-		6568A4B32B4FC61D008B14B9 /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4B22B4FC61D008B14B9 /* KeyboardHandler.swift */; };
 		6568A4B52B4FCE3A008B14B9 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4B42B4FCE3A008B14B9 /* AddTaskView.swift */; };
 		6568A4B92B51C520008B14B9 /* CalendarTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4B82B51C520008B14B9 /* CalendarTodoView.swift */; };
 		6568A4BB2B5276AD008B14B9 /* Date+Extensinon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568A4BA2B5276AD008B14B9 /* Date+Extensinon.swift */; };
@@ -49,7 +48,6 @@
 		6568A4A62B4961CB008B14B9 /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
 		6568A4A82B49CE17008B14B9 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
 		6568A4AC2B4D5D88008B14B9 /* AddTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskViewModel.swift; sourceTree = "<group>"; };
-		6568A4B22B4FC61D008B14B9 /* KeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		6568A4B42B4FCE3A008B14B9 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		6568A4B82B51C520008B14B9 /* CalendarTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTodoView.swift; sourceTree = "<group>"; };
 		6568A4BA2B5276AD008B14B9 /* Date+Extensinon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensinon.swift"; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 			children = (
 				6568A4772B3F48F6008B14B9 /* Extension */,
 				6568A4732B3DB083008B14B9 /* Consts.swift */,
-				6568A4B22B4FC61D008B14B9 /* KeyboardHandler.swift */,
 				6568A4BC2B529F11008B14B9 /* Protocols.swift */,
 			);
 			path = Helpers;
@@ -375,7 +372,6 @@
 				6568A4BB2B5276AD008B14B9 /* Date+Extensinon.swift in Sources */,
 				6568A4BD2B529F11008B14B9 /* Protocols.swift in Sources */,
 				65B432A72B39E151009E5D9A /* AppDelegate.swift in Sources */,
-				6568A4B32B4FC61D008B14B9 /* KeyboardHandler.swift in Sources */,
 				6568A4742B3DB083008B14B9 /* Consts.swift in Sources */,
 				6568A4C02B52CD28008B14B9 /* DetailTaskViewController.swift in Sources */,
 				6568A4AD2B4D5D88008B14B9 /* AddTaskViewModel.swift in Sources */,

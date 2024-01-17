@@ -18,6 +18,52 @@ final class CalendarTodoViewModel {
 }
 
 extension CalendarTodoViewModel {
+    private func createRealmInstance() -> Realm? {
+        do {
+            let realm = try Realm()
+            return realm
+        } catch {
+            print("Error creating Realm instance: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    func checkTaskOfDay(date: Date) -> Bool {
+        guard let realm = createRealmInstance() else { return false}
+        
+        let tasksForDate = realm.objects(TaskModel.self).filter("date_start >= %@ AND date_start <= %@", date.startOfDay, date.endOfDay)
+        return !tasksForDate.isEmpty
+    }
+    
+    func deleteTask(_ taskIndex: Int) {
+        guard let realm = createRealmInstance() else { return }
+        
+        let task = self.output.taskList[taskIndex]
+        
+        do {
+            try realm.write {
+                realm.delete(task)
+            }
+            self.output.taskList.remove(at: taskIndex)
+            delegate?.didChangeItemCount(to: self.output.taskList.count)
+        } catch {
+            print("Error deleting task: \(error.localizedDescription)")
+        }
+    }
+    
+    func loadTasks(forDate selectedDate: Date ) {
+        guard let realm = createRealmInstance() else { return }
+        
+        let selectedTasks = realm.objects(TaskModel.self).filter (
+            "date_start >= %@ AND date_finish <= %@", selectedDate.startOfDay, selectedDate.endOfDay
+        ).sorted(byKeyPath: "date_start", ascending: true)
+        
+        self.output.taskList = Array(selectedTasks)
+        
+        delegate?.didLoadTasks()
+        delegate?.didChangeItemCount(to: self.output.taskList.count)
+    }
+    
     func configureCell(_ cell: CustomTableViewCell, indexPath: IndexPath) {
         let task = output.taskList[indexPath.row]
         
@@ -36,47 +82,6 @@ extension CalendarTodoViewModel {
         let dateString = dateFormatter.string(from: date)
         
         return dateString
-    }
-    
-    func checkTaskOfDay(date: Date) -> Bool {
-        do {
-            let realm = try Realm()
-            let tasksForDate = realm.objects(TaskModel.self).filter("date_start >= %@ AND date_start <= %@", date.startOfDay, date.endOfDay)
-            return !tasksForDate.isEmpty
-        } catch {
-            return false
-        }
-    }
-    
-    func deleteTask(_ taskIndex: Int) {
-        let task = self.output.taskList[taskIndex]
-        
-        do {
-            let realm = try Realm()
-            try realm.write {
-                realm.delete(task)
-            }
-        } catch {
-            print("Error deleting task")
-        }
-        self.output.taskList.remove(at: taskIndex)
-        delegate?.didChangeItemCount(to: self.output.taskList.count)
-    }
-    
-    func loadTasks(forDate selectedDate: Date ) {
-        do {
-            let realm = try Realm()
-            let selectedTasks = realm.objects(TaskModel.self).filter (
-                "date_start >= %@ AND date_finish <= %@", selectedDate.startOfDay, selectedDate.endOfDay
-            ).sorted(byKeyPath: "date_start", ascending: true)
-            
-            self.output.taskList = Array(selectedTasks)
-            
-            delegate?.didLoadTasks()
-            delegate?.didChangeItemCount(to: self.output.taskList.count)
-        } catch {
-            print("Error loading data: \(error.localizedDescription)")
-        }
     }
 }
 

@@ -9,30 +9,34 @@ import Foundation
 import RealmSwift
 
 final class AddTaskViewModel {
-    func validateInput(title: String?, description: String?) -> (title: String, description: String)? {
-        guard let title = title, let description = description else { return nil }
-        
-        return (title, description)
+    private func createRealmInstance() -> Realm? {
+        do {
+            let realm = try Realm()
+            return realm
+        } catch {
+            print("Error creating Realm instance: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     func deleteTask(id: String) {
+        guard let realm = createRealmInstance() else { return }
+        
         do {
-            let realm = try Realm()
-            
             if let taskToDelete = realm.objects(TaskModel.self).filter("_id == %@", id).first {
                 try realm.write {
                     realm.delete(taskToDelete)
                 }
             }
         } catch {
-            print("delete Error")
+            print("Error deleting task: \(error.localizedDescription)")
         }
     }
     
     func updateTask(id: String, title: String, description: String, dateStart: Date, dateFinish: Date) {
+        guard let realm = createRealmInstance() else { return }
+        
         do {
-            let realm = try Realm()
-            
             if let taskToUpdate = realm.objects(TaskModel.self).filter("_id == %@", id).first {
                 try realm.write {
                     taskToUpdate.name = title
@@ -42,14 +46,14 @@ final class AddTaskViewModel {
                 }
             }
         } catch {
-            print("Error")
+            print("Error updating task: \(error.localizedDescription)")
         }
     }
     
     func saveTask(title: String, description: String, dateStart: Date, dateFinish: Date) {
+        guard let realm = createRealmInstance() else { return }
+        
         do {
-            let realm = try Realm()
-            
             try realm.write {
                 let task = TaskModel()
                 task.date_start = dateStart
@@ -58,10 +62,14 @@ final class AddTaskViewModel {
                 task.descriptionTask = description
                 realm.add(task)
             }
-            
-            print("Data saved to Realm")
         } catch {
-            print("Error: \(error.localizedDescription)")
+            print("Error saving task: \(error.localizedDescription)")
         }
+    }
+    
+    func validateInput(title: String?, description: String?) -> (title: String, description: String)? {
+        guard let title = title, let description = description else { return nil }
+        
+        return (title, description)
     }
 }

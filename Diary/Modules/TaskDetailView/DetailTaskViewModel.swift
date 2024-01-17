@@ -42,7 +42,7 @@ extension DetailTaskViewModel {
                 self.output.timeInterval = formatDateToString(from: data.date_start, to: data.date_finish)
             }
         } catch {
-            print("Erroe load task")
+            print("Error loading task: \(error.localizedDescription)")
         }
     }
 }
