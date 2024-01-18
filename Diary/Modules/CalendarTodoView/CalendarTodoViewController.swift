@@ -61,7 +61,7 @@ private extension CalendarTodoViewController {
 //MARK: - UITableViewDelegate, UITableViewDataSource
 extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.output.taskGetCount
+        return viewModel.taskList.isEmpty ? 0 : viewModel.taskList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -82,7 +82,7 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let task = viewModel.output.taskList[indexPath.row]
+        let task = viewModel.taskList[indexPath.row]
         
         let detailView = DetailTaskViewController (id: task._id)
         navigationController?.pushViewController(detailView, animated: true)
