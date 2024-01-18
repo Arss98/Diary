@@ -342,7 +342,7 @@ extension Realm {
                                                                       partitionPrefix: eventConfiguration.partitionPrefix,
                                                                       errorHandler: eventConfiguration.errorHandler)
             }
-            
+
             configuration.initialSubscriptions = rlmConfiguration.initialSubscriptions.map(ObjectiveCSupport.convert(block:))
             configuration.rerunOnOpen = rlmConfiguration.rerunOnOpen
 
