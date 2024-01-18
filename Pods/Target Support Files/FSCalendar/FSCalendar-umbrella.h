@@ -10,22 +10,22 @@
 #endif
 #endif
 
-#import "FSCalendar.h"
-#import "FSCalendarAppearance.h"
-#import "FSCalendarCalculator.h"
-#import "FSCalendarCell.h"
-#import "FSCalendarCollectionView.h"
-#import "FSCalendarCollectionViewLayout.h"
-#import "FSCalendarConstants.h"
-#import "FSCalendarDelegationFactory.h"
-#import "FSCalendarDelegationProxy.h"
-#import "FSCalendarDynamicHeader.h"
-#import "FSCalendarExtensions.h"
-#import "FSCalendarHeaderView.h"
-#import "FSCalendarSeparatorDecorationView.h"
-#import "FSCalendarStickyHeader.h"
-#import "FSCalendarTransitionCoordinator.h"
-#import "FSCalendarWeekdayView.h"
+#import <FSCalendar/FSCalendar.h>
+#import <FSCalendar/FSCalendarAppearance.h>
+#import <FSCalendar/FSCalendarCalculator.h>
+#import <FSCalendar/FSCalendarCell.h>
+#import <FSCalendar/FSCalendarCollectionView.h>
+#import <FSCalendar/FSCalendarCollectionViewLayout.h>
+#import <FSCalendar/FSCalendarConstants.h>
+#import <FSCalendar/FSCalendarDelegationFactory.h>
+#import <FSCalendar/FSCalendarDelegationProxy.h>
+#import <FSCalendar/FSCalendarDynamicHeader.h>
+#import <FSCalendar/FSCalendarExtensions.h>
+#import <FSCalendar/FSCalendarHeaderView.h>
+#import <FSCalendar/FSCalendarSeparatorDecorationView.h>
+#import <FSCalendar/FSCalendarStickyHeader.h>
+#import <FSCalendar/FSCalendarTransitionCoordinator.h>
+#import <FSCalendar/FSCalendarWeekdayView.h>
 
 FOUNDATION_EXPORT double FSCalendarVersionNumber;
 FOUNDATION_EXPORT const unsigned char FSCalendarVersionString[];

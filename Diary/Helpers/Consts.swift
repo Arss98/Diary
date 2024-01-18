@@ -21,7 +21,7 @@ struct Consts {
     static let startDateTitle = "Starts"
     static let endDateTitle = "Ends"
     static let noTasksLAbel = "No Events"
-    static let ok = "OK"
+    static let okButton = "OK"
     static let detailTaskTitle = "Event Details"
     static let backButtonTitle = "Back" 
     static let editButtonTitle = "Edit"

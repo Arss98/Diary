@@ -6,12 +6,11 @@ final class CalendarTodoViewController: UIViewController {
     private let viewModel = CalendarTodoViewModel()
     private let contentView = CalendarTodoView()
     private var selectedDate: Date = Date()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.loadTasks(forDate: selectedDate)
@@ -35,7 +34,7 @@ final class CalendarTodoViewController: UIViewController {
     }
 }
 
-//MARK: - UI settings
+// MARK: - UI settings
 private extension CalendarTodoViewController {
     func setupNaVigationBar() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -58,15 +57,16 @@ private extension CalendarTodoViewController {
     }
 }
 
-//MARK: - UITableViewDelegate, UITableViewDataSource
+// MARK: - UITableViewDelegate, UITableViewDataSource
 extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.taskList.isEmpty ? 0 : viewModel.taskList.count
+        return viewModel.taskList == nil ? 0 : viewModel.taskList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier,
-                                                 for: indexPath) as! CustomTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier, for: indexPath) as? CustomTableViewCell else {
+            return UITableViewCell()
+        }
         
         viewModel.configureCell(cell, indexPath: indexPath)
         cell.selectionStyle = .none
@@ -84,12 +84,12 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let task = viewModel.taskList[indexPath.row]
         
-        let detailView = DetailTaskViewController (id: task._id)
+        let detailView = DetailTaskViewController(id: task.id)
         navigationController?.pushViewController(detailView, animated: true)
     }
 }
 
-//MARK: - CalendarTodoViewModelDelegate
+// MARK: - CalendarTodoViewModelDelegate
 extension CalendarTodoViewController: CalendarTodoViewModelDelegate {
     func didLoadTasks() {
         contentView.taskList.reloadData()
@@ -100,7 +100,7 @@ extension CalendarTodoViewController: CalendarTodoViewModelDelegate {
     }
 }
 
-//MARK: - FSCalendarDelegate, FSCalendarDataSource
+// MARK: - FSCalendarDelegate, FSCalendarDataSource
 extension CalendarTodoViewController: FSCalendarDelegate, FSCalendarDataSource {
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         let currentPage = calendar.currentPage

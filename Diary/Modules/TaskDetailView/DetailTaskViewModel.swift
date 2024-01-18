@@ -35,11 +35,11 @@ extension DetailTaskViewModel {
         do {
             let realm = try Realm()
             
-            if let data = realm.objects(TaskModel.self).filter("_id == %@", id).first {
-                self.output.date = data.date_start
+            if let data = realm.objects(TaskModel.self).filter("id == %@", id).first {
+                self.output.date = data.dateStart
                 self.output.title = data.name
                 self.output.description = data.descriptionTask
-                self.output.timeInterval = formatDateToString(from: data.date_start, to: data.date_finish)
+                self.output.timeInterval = formatDateToString(from: data.dateStart, to: data.dateFinish)
             }
         } catch {
             print("Error loading task: \(error.localizedDescription)")
@@ -47,7 +47,7 @@ extension DetailTaskViewModel {
     }
 }
 
-extension DetailTaskViewModel{
+extension DetailTaskViewModel {
     struct Output {
         var date: Date = Date()
         var title: String = ""

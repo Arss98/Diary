@@ -35,4 +35,3 @@ private extension CustomHeaderView {
         }
     }
 }
-

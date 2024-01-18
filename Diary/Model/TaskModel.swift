@@ -8,9 +8,9 @@ import Foundation
 import RealmSwift
 
 class TaskModel: Object {
-    @Persisted(primaryKey: true) var _id = UUID().uuidString
-    @Persisted var date_start: Date = Date()
-    @Persisted var date_finish: Date = Date()
+    @Persisted(primaryKey: true) var id = UUID().uuidString
+    @Persisted var dateStart: Date = Date()
+    @Persisted var dateFinish: Date = Date()
     @Persisted var name: String = ""
     @Persisted var descriptionTask: String = ""
 }

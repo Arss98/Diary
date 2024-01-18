@@ -23,7 +23,7 @@ final class AddTaskViewModel {
         guard let realm = self.realm else { return }
         
         do {
-            if let taskToDelete = realm.objects(TaskModel.self).filter("_id == %@", id).first {
+            if let taskToDelete = realm.objects(TaskModel.self).filter("id == %@", id).first {
                 try realm.write {
                     realm.delete(taskToDelete)
                 }
@@ -37,12 +37,12 @@ final class AddTaskViewModel {
         guard let realm = self.realm else { return }
         
         do {
-            if let taskToUpdate = realm.objects(TaskModel.self).filter("_id == %@", id).first {
+            if let taskToUpdate = realm.objects(TaskModel.self).filter("id == %@", id).first {
                 try realm.write {
                     taskToUpdate.name = title
                     taskToUpdate.descriptionTask = description
-                    taskToUpdate.date_start = dateStart
-                    taskToUpdate.date_finish = dateFinish
+                    taskToUpdate.dateStart = dateStart
+                    taskToUpdate.dateFinish = dateFinish
                 }
             }
         } catch {
@@ -56,8 +56,8 @@ final class AddTaskViewModel {
         do {
             try realm.write {
                 let task = TaskModel()
-                task.date_start = dateStart
-                task.date_finish = dateFinish
+                task.dateStart = dateStart
+                task.dateFinish = dateFinish
                 task.name = title
                 task.descriptionTask = description
                 realm.add(task)

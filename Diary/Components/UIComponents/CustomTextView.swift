@@ -48,7 +48,7 @@ class CustomTextView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupDelegate(delegate: UITextViewDelegate)  {
+    func setupDelegate(delegate: UITextViewDelegate) {
         textView.delegate = delegate
     }
 }

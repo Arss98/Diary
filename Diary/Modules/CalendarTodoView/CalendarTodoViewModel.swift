@@ -24,11 +24,10 @@ final class CalendarTodoViewModel {
 }
 
 extension CalendarTodoViewModel {
-    
     func checkTaskOfDay(date: Date) -> Bool {
         guard let realm = self.realm else { return false}
         
-        let tasksForDate = realm.objects(TaskModel.self).filter("date_start >= %@ AND date_start <= %@", date.startOfDay, date.endOfDay)
+        let tasksForDate = realm.objects(TaskModel.self).filter("dateStart >= %@ AND dateStart <= %@", date.startOfDay, date.endOfDay)
         return !tasksForDate.isEmpty
     }
     
@@ -50,9 +49,9 @@ extension CalendarTodoViewModel {
     func loadTasks(forDate selectedDate: Date ) {
         guard let realm = self.realm  else { return }
         
-        taskList = realm.objects(TaskModel.self).filter (
-            "date_start >= %@ AND date_start <= %@", selectedDate.startOfDay, selectedDate.endOfDay
-        ).sorted(byKeyPath: "date_start", ascending: true)
+        taskList = realm.objects(TaskModel.self).filter(
+            "dateStart >= %@ AND dateStart <= %@", selectedDate.startOfDay, selectedDate.endOfDay
+        ).sorted(byKeyPath: "dateStart", ascending: true)
                 
         delegate?.didLoadTasks()
         delegate?.didChangeItemCount(to: taskList.count)
@@ -61,7 +60,7 @@ extension CalendarTodoViewModel {
     func configureCell(_ cell: CustomTableViewCell, indexPath: IndexPath) {
         let task = taskList[indexPath.row]
         
-        cell.configure(from: dateToString(task.date_start), to: dateToString(task.date_finish), nameTask: task.name)
+        cell.configure(from: dateToString(task.dateStart), to: dateToString(task.dateFinish), nameTask: task.name)
     }
     
     func getCurrentDate() -> String {
@@ -76,4 +75,3 @@ extension CalendarTodoViewModel {
         return dateString
     }
 }
-

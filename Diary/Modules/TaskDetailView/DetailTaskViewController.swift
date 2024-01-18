@@ -33,7 +33,7 @@ class DetailTaskViewController: UIViewController {
     }
 }
 
-//MARK: UI Setting
+// MARK: UI Setting
 private extension DetailTaskViewController {
     func initialize() {
         view.backgroundColor = .mainBackground
@@ -53,7 +53,7 @@ private extension DetailTaskViewController {
         self.title = Consts.detailTaskTitle
         self.navigationItem.backButtonTitle = Consts.backButtonTitle
         
-        let rightButton = UIBarButtonItem (
+        let rightButton = UIBarButtonItem(
             title: Consts.editButtonTitle,
             style: .plain,
             target: self,
@@ -76,7 +76,7 @@ private extension DetailTaskViewController {
     }
 }
 
-//MARK: - Navigation
+// MARK: - Navigation
 private extension DetailTaskViewController {
     @objc func rightButtonTapped() {
         let addTaskView = AddTaskViewController(id: id, selectedDate: viewModel.output.date)

@@ -248,6 +248,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 65B432B72B39E152009E5D9A /* Build configuration list for PBXNativeTarget "Diary" */;
 			buildPhases = (
+				65B7554A2B593AAC002A4329 /* ShellScript */,
 				7ECA878244C8956E498DBDA0 /* [CP] Check Pods Manifest.lock */,
 				65B4329F2B39E151009E5D9A /* Sources */,
 				65B432A02B39E151009E5D9A /* Frameworks */,
@@ -313,6 +314,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		65B7554A2B593AAC002A4329 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}\"/SwiftLint/swiftlint\"\n";
+		};
 		7ECA878244C8956E498DBDA0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -63,7 +63,7 @@ extension AddTaskViewController: UITextViewDelegate {
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if (text == "\n") {
+        if text == "\n" {
             if textView == contentView.nameTextView.textView {
                 contentView.descriptionTextView.textView.becomeFirstResponder()
             } else {
@@ -75,7 +75,7 @@ extension AddTaskViewController: UITextViewDelegate {
     }
 }
 
-//MARK: - UI settings
+// MARK: - UI settings
 private extension AddTaskViewController {
     func initialize() {
         view.backgroundColor = .mainBackground
@@ -157,7 +157,7 @@ private extension AddTaskViewController {
     }
 }
 
-//MARK: - Data validation check
+// MARK: - Data validation check
 private extension AddTaskViewController {
     @objc func deleteButtonTapped() {
         guard let taskId = id else { return }
@@ -178,7 +178,7 @@ private extension AddTaskViewController {
     }
     
     @objc func saveButtonTapped() {
-        guard let data = viewModel.validateInput (
+        guard let data = viewModel.validateInput(
             title: contentView.nameTextView.text,
             description: contentView.descriptionTextView.text) else {
             contentView.nameTextView.isHiddenErrorLabel = false
@@ -189,7 +189,7 @@ private extension AddTaskViewController {
         
         switch type {
         case .add:
-            viewModel.saveTask (
+            viewModel.saveTask(
                 title: data.title,
                 description: data.description,
                 dateStart: contentView.startDatePicker.date,
@@ -197,7 +197,7 @@ private extension AddTaskViewController {
         case .edit:
             guard let taskId = id else { return }
             
-            viewModel.updateTask (
+            viewModel.updateTask(
                 id: taskId,
                 title: data.title,
                 description: data.description,
@@ -213,7 +213,7 @@ private extension AddTaskViewController {
                                       message: Consts.ErrorMessage.alertErrorMessage,
                                       preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: Consts.ok, style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: Consts.okButton, style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
 }

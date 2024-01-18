@@ -15,7 +15,7 @@ enum TypeDatePicker {
 
 class CustomDatePicker: UIDatePicker {
     private let label: CustomHeaderView
-  
+    
     init(title: String) {
         self.label = CustomHeaderView(textLabel: title, fontSize: 20, fontWeight: .regular)
         super.init(frame: .zero)
@@ -28,11 +28,11 @@ class CustomDatePicker: UIDatePicker {
     }
 }
 
-//MARK: - Constraints setting
+// MARK: - Constraints setting
 private extension CustomDatePicker {
     func initialize() {
         self.addSubview(label)
-
+        
         setupConstraints()
     }
     
@@ -44,7 +44,7 @@ private extension CustomDatePicker {
     }
 }
 
-//MARK: - Setting default date
+// MARK: - Setting default date
 extension CustomDatePicker {
     func setupCurrentDate(inputDate: Date, type: TypeDatePicker = .startDate) {
         var dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: inputDate)
@@ -54,11 +54,11 @@ extension CustomDatePicker {
         dateComponents.minute = currentComponents.minute
         
         switch type {
-            case .startDate:
-                dateComponents.minute = (dateComponents.minute! < 30) ? 0 : 30
-            case .endDate:
-                dateComponents.hour! += 1
-                dateComponents.minute = 0
+        case .startDate:
+            dateComponents.minute = (dateComponents.minute! < 30) ? 0 : 30
+        case .endDate:
+            dateComponents.hour! += 1
+            dateComponents.minute = 0
         }
         
         guard let date = calendar.date(from: dateComponents) else { return }
