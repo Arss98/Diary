@@ -10,14 +10,14 @@ import SnapKit
 
 final class AddTaskView: UIView {
     lazy var saveButton = UIButton(type: .system)
-    lazy var startDatePicker = CustomDatePicker(title: Consts.startDateTitle)
-    lazy var finishDatePicker = CustomDatePicker(title: Consts.endDateTitle)
-    lazy var nameTextView = CustomTextView(label: Consts.headerTaskTitle,
-                                           errorLabel: Consts.ErrorMessage.errorTitle,
-                                           placeholder: Consts.placeholderTaskTitle)
-    lazy var descriptionTextView = CustomTextView(label: Consts.headerTaskDescription,
-                                                  errorLabel: Consts.ErrorMessage.errorDescription,
-                                                  placeholder: Consts.placeholderNodeText,
+    lazy var startDatePicker = CustomDatePicker(title: Consts.UIConstants.startDateTitle)
+    lazy var finishDatePicker = CustomDatePicker(title: Consts.UIConstants.endDateTitle)
+    lazy var nameTextView = CustomTextView(label: Consts.Headers.headerTaskTitle,
+                                           errorLabel: Consts.ErrorMessages.errorTitle,
+                                           placeholder: Consts.Placeholders.placeholderTaskTitle)
+    lazy var descriptionTextView = CustomTextView(label: Consts.Headers.headerTaskDescription,
+                                                  errorLabel: Consts.ErrorMessages.errorDescription,
+                                                  placeholder: Consts.Placeholders.placeholderNodeText,
                                                   typeTextView: .description)
     
     init() {
@@ -38,7 +38,7 @@ private extension AddTaskView {
     }
     
     func setupSaveButton() {
-        saveButton.setTitle(Consts.saveButtonTitle, for: .normal)
+        saveButton.setTitle(Consts.UIConstants.saveButtonTitle, for: .normal)
         saveButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         saveButton.backgroundColor = .mainBackground
         saveButton.tintColor = .white

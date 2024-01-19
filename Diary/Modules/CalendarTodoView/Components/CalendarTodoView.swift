@@ -66,7 +66,7 @@ private extension CalendarTodoView {
         tableHeaderLabel.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         tableHeaderLabel.backgroundColor = .white
         
-        label.text = Consts.tableHeaderView
+        label.text = Consts.Headers.tableHeaderView
         label.textAlignment = .left
         label.textColor = .black
         label.font = .systemFont(ofSize: 24, weight: .medium)
@@ -79,9 +79,9 @@ private extension CalendarTodoView {
     
     func setupTaskList() {
         taskList.separatorStyle = .none
-        taskList.register(CustomTableViewCell.self, forCellReuseIdentifier: Consts.customCellIdentifier)
+        taskList.register(CustomTableViewCell.self, forCellReuseIdentifier: Consts.UIConstants.customCellIdentifier)
 
-        noTasksLabel.text = Consts.noTasksLAbel
+        noTasksLabel.text = Consts.UIConstants.noTasksTitle
         noTasksLabel.textAlignment = .center
         noTasksLabel.font = .systemFont(ofSize: 20, weight: .medium)
         noTasksLabel.isHidden = true

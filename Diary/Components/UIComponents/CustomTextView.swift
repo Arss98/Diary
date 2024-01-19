@@ -14,11 +14,11 @@ enum TypeTextView {
 }
 
 class CustomTextView: UIView {
+    let textView = UITextView()
     private let label: CustomHeaderView
     private let errorLabel = UILabel()
     private let placeholderText: String
     private let type: TypeTextView
-    let textView = UITextView()
     
     var text: String? {
         if textView.text == placeholderText || textView.text == "" {

@@ -44,7 +44,7 @@ private extension CalendarTodoViewController {
         ]
         
         self.title = viewModel.getCurrentDate()
-        self.navigationItem.backButtonTitle = Consts.backButtonTitle
+        self.navigationItem.backButtonTitle = Consts.UIConstants.backButtonTitle
         
         let leftButton = UIBarButtonItem(title: "2024", style: .plain, target: self, action: #selector(floatingButtonTapped))
         navigationItem.leftBarButtonItem = leftButton
@@ -64,7 +64,7 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Consts.customCellIdentifier, for: indexPath) as? CustomTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Consts.UIConstants.customCellIdentifier, for: indexPath) as? CustomTableViewCell else {
             return UITableViewCell()
         }
         

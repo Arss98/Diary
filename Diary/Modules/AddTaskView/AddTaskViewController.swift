@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-enum TypeTackViewController {
+enum TypeTaskViewController {
     case add
     case edit
 }
@@ -16,21 +16,25 @@ enum TypeTackViewController {
 final class AddTaskViewController: UIViewController {
     private let viewModel = AddTaskViewModel()
     private let contentView = AddTaskView()
-    private let type: TypeTackViewController
-    private var id: String?
+    private let type: TypeTaskViewController
     private var topConstraint: Constraint?
     private var activeInput: UITextView?
+    private var id: String?
     
-    init(selectedDate: Date, typeView: TypeTackViewController = .add) {
+    init(selectedDate: Date, typeView: TypeTaskViewController = .add) {
         self.type = typeView
         super.init(nibName: nil, bundle: nil)
         contentView.startDatePicker.setupCurrentDate(inputDate: selectedDate)
         contentView.finishDatePicker.setupCurrentDate(inputDate: selectedDate, type: .endDate)
     }
     
-    convenience init(id: String, selectedDate: Date) {
+    convenience init(id: String, title: String, description: String, selectedDate: Date) {
         self.init(selectedDate: selectedDate, typeView: .edit)
         self.id = id
+        self.contentView.nameTextView.textView.text = title
+        self.contentView.nameTextView.textView.textColor = .black
+        self.contentView.descriptionTextView.textView.text = description
+        self.contentView.descriptionTextView.textView.textColor = .black
     }
     
     required init?(coder: NSCoder) {
@@ -59,6 +63,14 @@ extension AddTaskViewController: UITextViewDelegate {
         if textView.textColor == .lightGray {
             textView.text = nil
             textView.textColor = .black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        let trimmedText = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedText.isEmpty {
+            textView.text = (textView == contentView.nameTextView.textView) ? Consts.Placeholders.placeholderTaskTitle : Consts.Placeholders.placeholderNodeText
+            textView.textColor = .lightGray
         }
     }
     
@@ -92,10 +104,10 @@ private extension AddTaskViewController {
         
         switch type {
         case .add:
-            self.title = Consts.addTaskTitle
+            self.title = Consts.Headers.addTaskTitle
         case .edit:
-            self.title = Consts.editTaskTitle
-            let rightButton = UIBarButtonItem(title: Consts.deleteButtonTitle, style: .plain, target: self, action: #selector(deleteButtonTapped))
+            self.title = Consts.Headers.editTaskTitle
+            let rightButton = UIBarButtonItem(title: Consts.UIConstants.deleteButtonTitle, style: .plain, target: self, action: #selector(deleteButtonTapped))
             navigationItem.rightBarButtonItem = rightButton
         }
     }
@@ -119,7 +131,7 @@ private extension AddTaskViewController {
     
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue, let activeInput = self.activeInput else { return }
-    
+        
         let bottomOfTextField = activeInput.convert(activeInput.bounds, to: self.contentView).maxY
         
         if bottomOfTextField > keyboardSize.height {
@@ -162,19 +174,10 @@ private extension AddTaskViewController {
     @objc func deleteButtonTapped() {
         guard let taskId = id else { return }
         
-        let alertController = UIAlertController(title: Consts.deleteAlertTitle, message: Consts.deleteAlertDescription, preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: Consts.cancelButtonTitle, style: .cancel, handler: nil)
-        
-        let deleteAction = UIAlertAction(title: Consts.deleteButtonTitle, style: .destructive) { _ in
+        showDeleteAlert(title: Consts.Alerts.deleteAlertTitle, message: Consts.Alerts.deleteAlertDescription) {
             self.viewModel.deleteTask(id: taskId)
             self.navigationController?.popToRootViewController(animated: true)
         }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(deleteAction)
-        
-        present(alertController, animated: true, completion: nil)
     }
     
     @objc func saveButtonTapped() {
@@ -183,37 +186,36 @@ private extension AddTaskViewController {
             description: contentView.descriptionTextView.text) else {
             contentView.nameTextView.isHiddenErrorLabel = false
             contentView.descriptionTextView.isHiddenErrorLabel = false
-            showAlert()
+            showErroeAlert(title: Consts.ErrorMessages.alertError, message: Consts.ErrorMessages.alertErrorMessage)
             return
         }
         
         switch type {
         case .add:
-            viewModel.saveTask(
-                title: data.title,
-                description: data.description,
-                dateStart: contentView.startDatePicker.date,
-                dateFinish: contentView.finishDatePicker.date)
+            saveNewTask(title: data.title, description: data.description)
         case .edit:
-            guard let taskId = id else { return }
-            
-            viewModel.updateTask(
-                id: taskId,
-                title: data.title,
-                description: data.description,
-                dateStart: contentView.startDatePicker.date,
-                dateFinish: contentView.finishDatePicker.date)
+            updateExistingTask(title: data.title, description: data.description)
         }
         
         navigationController?.popViewController(animated: true)
     }
     
-    func showAlert() {
-        let alert = UIAlertController(title: Consts.ErrorMessage.alertError,
-                                      message: Consts.ErrorMessage.alertErrorMessage,
-                                      preferredStyle: .alert)
+    func saveNewTask(title: String, description: String) {
+        viewModel.saveTask(
+            title: title,
+            description: description,
+            dateStart: contentView.startDatePicker.date,
+            dateFinish: contentView.finishDatePicker.date)
+    }
+    
+    func updateExistingTask(title: String, description: String) {
+        guard let taskId = id else { return }
         
-        alert.addAction(UIAlertAction(title: Consts.okButton, style: .default, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        viewModel.updateTask(
+            id: taskId,
+            title: title,
+            description: description,
+            dateStart: contentView.startDatePicker.date,
+            dateFinish: contentView.finishDatePicker.date)
     }
 }

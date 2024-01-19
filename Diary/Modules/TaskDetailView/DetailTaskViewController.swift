@@ -50,11 +50,11 @@ private extension DetailTaskViewController {
     }
     
     func setupNavigationBar() {
-        self.title = Consts.detailTaskTitle
-        self.navigationItem.backButtonTitle = Consts.backButtonTitle
+        self.title = Consts.Headers.detailTaskTitle
+        self.navigationItem.backButtonTitle = Consts.UIConstants.backButtonTitle
         
         let rightButton = UIBarButtonItem(
-            title: Consts.editButtonTitle,
+            title: Consts.UIConstants.editButtonTitle,
             style: .plain,
             target: self,
             action: #selector(rightButtonTapped)
@@ -79,7 +79,11 @@ private extension DetailTaskViewController {
 // MARK: - Navigation
 private extension DetailTaskViewController {
     @objc func rightButtonTapped() {
-        let addTaskView = AddTaskViewController(id: id, selectedDate: viewModel.output.date)
+        let addTaskView = AddTaskViewController(id: id,
+                                                title: viewModel.output.title,
+                                                description: viewModel.output.description,
+                                                selectedDate: viewModel.output.date)
+        
         navigationController?.pushViewController(addTaskView, animated: true)
     }
 }
