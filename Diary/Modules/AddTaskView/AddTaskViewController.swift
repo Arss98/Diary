@@ -186,7 +186,7 @@ private extension AddTaskViewController {
             description: contentView.descriptionTextView.text) else {
             contentView.nameTextView.isHiddenErrorLabel = false
             contentView.descriptionTextView.isHiddenErrorLabel = false
-            showErroeAlert(title: Consts.ErrorMessages.alertError, message: Consts.ErrorMessages.alertErrorMessage)
+            showErroeAlert(title: Consts.Alerts.alertErrorTitle, message: Consts.ErrorMessages.alertErrorMessage)
             return
         }
         

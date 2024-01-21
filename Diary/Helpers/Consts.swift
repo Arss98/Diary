@@ -42,12 +42,12 @@ struct Consts {
     struct Alerts {
         static let deleteAlertTitle = "Confirmation of deletion"
         static let deleteAlertDescription = "Are you sure you want to delete this task?"
+        static let alertErrorTitle = "Error"
     }
     
     struct ErrorMessages {
         static let errorTitle = "The 'Title' field cannot be empty."
         static let errorDescription = "The 'Description' field cannot be empty."
-        static let alertError = "Error"
         static let alertErrorMessage = "Please fill in all fields."
     }
 }

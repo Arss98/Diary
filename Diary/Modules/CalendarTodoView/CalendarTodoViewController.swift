@@ -59,11 +59,11 @@ private extension CalendarTodoViewController {
         self.title = viewModel.currentDate
         self.navigationItem.backButtonTitle = Consts.UIConstants.backButtonTitle
         
+        navigationController?.navigationBar.tintColor = .white
+        
         guard let image = UIImage.imagePlus else { return }
         let rightButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(addButtonTapped))
         navigationItem.rightBarButtonItem = rightButton
-        
-        navigationController?.navigationBar.tintColor = .white
     }
 }
 
