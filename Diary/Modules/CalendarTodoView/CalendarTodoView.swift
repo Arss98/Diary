@@ -13,7 +13,16 @@ final class CalendarTodoView: UIView {
     lazy var calendar = FSCalendar()
     lazy var noTasksLabel = UILabel()
     lazy var tableHeaderLabel = UIView()
+    lazy var tableHeaderButton = UIButton(type: .system)
     lazy var taskList = UITableView(frame: .zero, style: .plain)
+    
+    private var imageButton: UIImage = .chevronForward
+    var expandetList: Bool = false {
+        didSet {
+            imageButton = expandetList ? .chevronDown : .chevronForward
+            tableHeaderButton.setImage(imageButton, for: .normal)
+        }
+    }
     
     init() {
         super.init(frame: .zero)
@@ -37,9 +46,9 @@ private extension CalendarTodoView {
     }
     
     func addSubview() {
-        self.addSubview(calendar)
-        self.addSubview(tableHeaderLabel)
-        self.addSubview(taskList)
+        [calendar, tableHeaderLabel, tableHeaderButton, taskList]
+            .forEach { addSubview($0) }
+        
         taskList.addSubview(noTasksLabel)
     }
     
@@ -62,24 +71,33 @@ private extension CalendarTodoView {
         let label = UILabel()
         
         tableHeaderLabel.addSubview(label)
+        tableHeaderLabel.addSubview(tableHeaderButton)
+        
         tableHeaderLabel.layer.cornerRadius = 20
         tableHeaderLabel.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         tableHeaderLabel.backgroundColor = .white
+        
+        tableHeaderButton.setImage(imageButton, for: .normal)
+        tableHeaderButton.tintColor = .black
         
         label.text = Consts.Headers.tableHeaderView
         label.textAlignment = .left
         label.textColor = .black
         label.font = .systemFont(ofSize: 24, weight: .medium)
-        
+                
         label.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(16)
+        }
+        
+        tableHeaderButton.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(16)
         }
     }
     
     func setupTaskList() {
         taskList.separatorStyle = .none
-        taskList.register(CustomTableViewCell.self, forCellReuseIdentifier: Consts.UIConstants.customCellIdentifier)
 
         noTasksLabel.text = Consts.UIConstants.noTasksTitle
         noTasksLabel.textAlignment = .center

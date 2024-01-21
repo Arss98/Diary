@@ -2,15 +2,27 @@ import UIKit
 import FSCalendar
 import SnapKit
 
+enum TypeTaskList {
+    case expand
+    case compact
+}
+
 final class CalendarTodoViewController: UIViewController {
     private let viewModel = CalendarTodoViewModel()
     private let contentView = CalendarTodoView()
     private var selectedDate: Date = Date()
+    private var typeList: TypeTaskList = .compact {
+        didSet {
+            contentView.taskList.reloadData()
+            viewModel.loadTasks(forDate: selectedDate)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.loadTasks(forDate: selectedDate)
@@ -23,6 +35,7 @@ final class CalendarTodoViewController: UIViewController {
         setupNaVigationBar()
         setupDelegate()
         swipeAction()
+        setupButton()
     }
     
     func setupDelegate() {
@@ -43,11 +56,8 @@ private extension CalendarTodoViewController {
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)
         ]
         
-        self.title = viewModel.getCurrentDate()
+        self.title = viewModel.currentDate
         self.navigationItem.backButtonTitle = Consts.UIConstants.backButtonTitle
-        
-        let leftButton = UIBarButtonItem(title: "2024", style: .plain, target: self, action: #selector(floatingButtonTapped))
-        navigationItem.leftBarButtonItem = leftButton
         
         guard let image = UIImage.imagePlus else { return }
         let rightButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(addButtonTapped))
@@ -60,21 +70,41 @@ private extension CalendarTodoViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.taskList == nil ? 0 : viewModel.taskList.count
+        return typeList == .expand ? 25 : (viewModel.taskList?.count ?? 0)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: Consts.UIConstants.customCellIdentifier, for: indexPath) as? CustomTableViewCell else {
-            return UITableViewCell()
+        let reuseIdentifier: String
+        let cell: UITableViewCell
+
+        switch typeList {
+        case .expand:
+            reuseIdentifier = Consts.UIConstants.customExpandetCellIdentifier
+            contentView.taskList.register(ExpandedCustomTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+            cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? ExpandedCustomTableViewCell ?? ExpandedCustomTableViewCell()
+            if let expandedCell = cell as? ExpandedCustomTableViewCell {
+                viewModel.configureExpandetCell(expandedCell, indexPath: indexPath, date: selectedDate)
+            }
+
+        case .compact:
+            reuseIdentifier = Consts.UIConstants.customCompactCellIdentifier
+            contentView.taskList.register(CompactCustomTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
+            cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CompactCustomTableViewCell ?? CompactCustomTableViewCell()
+            if let compactCell = cell as? CompactCustomTableViewCell {
+                viewModel.configureCompactCell(compactCell, indexPath: indexPath)
+            }
         }
         
-        viewModel.configureCell(cell, indexPath: indexPath)
         cell.selectionStyle = .none
         return cell
     }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return typeList == .compact ? true : false
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+        if editingStyle == .delete && typeList == .compact {
             viewModel.deleteTask(indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
             contentView.calendar.reloadData()
@@ -82,8 +112,20 @@ extension CalendarTodoViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let task = viewModel.taskList[indexPath.row]
+        switch typeList {
+        case .compact:
+            if let task = viewModel.taskList?[indexPath.row] {
+                navigateToDetailViewController(with: task)
+            }
+        case .expand:
+            if let task = viewModel.taskDictionary[indexPath.row] {
+                navigateToDetailViewController(with: task)
+            }
+        }
         
+    }
+    
+    func navigateToDetailViewController(with task: TaskModel) {
         let detailView = DetailTaskViewController(id: task.id)
         navigationController?.pushViewController(detailView, animated: true)
     }
@@ -96,7 +138,11 @@ extension CalendarTodoViewController: CalendarTodoViewModelDelegate {
     }
     
     func didChangeItemCount(to count: Int) {
-        contentView.noTasksLabel.isHidden = (count == 0) ? false : true
+        if typeList == .compact {
+            contentView.noTasksLabel.isHidden = (count == 0) ? false : true
+        } else {
+            contentView.noTasksLabel.isHidden = true
+        }
     }
 }
 
@@ -122,7 +168,7 @@ extension CalendarTodoViewController: FSCalendarDelegate, FSCalendarDataSource {
     }
 }
 
-// MARK: - Private Extension
+// MARK: - Private Metods
 private extension CalendarTodoViewController {
     func swipeAction() {
         let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
@@ -160,8 +206,13 @@ private extension CalendarTodoViewController {
         }
     }
     
-    @objc func floatingButtonTapped() {
-        print("Floating button tapped!")
+    func setupButton() {
+        contentView.tableHeaderButton.addTarget(self, action: #selector(toggleTypeList), for: .touchUpInside)
+    }
+    
+    @objc func toggleTypeList() {
+        contentView.expandetList.toggle()
+        typeList = contentView.expandetList ? .expand : .compact
     }
     
     @objc func addButtonTapped() {

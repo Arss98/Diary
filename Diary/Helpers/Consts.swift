@@ -9,7 +9,8 @@ import Foundation
 
 struct Consts {
     struct UIConstants {
-        static let customCellIdentifier = "CustomTableViewCell"
+        static let customCompactCellIdentifier = "CompactCustomTableViewCell"
+        static let customExpandetCellIdentifier = "ExpandedCustomTableViewCell"
         static let selectDateAlertTitle = "Select Date"
         static let addTaskTitle = "New Event"
         static let editTaskTitle = "Edit Event"
