@@ -1,0 +1,9 @@
+included:
+  - Diary
+
+line_length:
+- 180 # warning
+- 250 # error
+
+disabled_rules:
+- trailing_whitespace
